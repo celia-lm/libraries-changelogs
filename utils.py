@@ -5,25 +5,13 @@ import requests
 # https://stackoverflow.com/a/72188040
 from packaging.version import Version, parse
 
-import base64
 import dash_mantine_components as dmc
 from dash import dcc, html, ctx
 from dash_iconify import DashIconify
-import time
 import dash
 import datetime
 import traceback
 import diskcache
-import os
-import github
-from github import Github, Auth
-
-# for debugging purposes
-# def timestamp():
-#     return "%i |> " % int(time.time())
-
-
-# ic.configureOutput(prefix=timestamp)
 
 cache = diskcache.Cache("./cache")
 
@@ -324,69 +312,10 @@ def get_library_history(lib: dict | str) -> dict:
 @cache.memoize()
 def get_repo_url(lib: dict):
     for name, url in lib["urls_dict"].items():
-        if (name.lower() in ["source", "github"]) or ("github" in url):
-            is_github = True
-            url_parts = url.removeprefix("https://github.com/").split("/")
-            # make sure that the url matches the format for the GitHub API (gh/repo_owner/repo_name)
-            # for example if the url is https://github.com/plotly/dash/releases, remove /releases
-            if len(url_parts) > 2:
-                url = f"https://github.com/{url_parts[0]}/{url_parts[1]}"
-            return {"url": url, "is_github": True}
-        elif (name.lower() in ["changes", "changelog"]) or ("change" in url):
-            return {"url": url, "is_github": False}
+        if (name.lower() in ["source", "github", "changes", "changelog"]) or ("github" in url):
+            return {"url": url}
 
     return {"url": None}
-
-
-# https://flask-caching.readthedocs.io/en/latest/index.html#deleting-memoize-cache
-# TODO: add checks for recent updates to delete memoized result
-# and re-execute the get_gh_changelogs function
-@cache.memoize()
-def get_changelogs(repo_url_dict, github_pat=None):
-    if repo_url_dict.get("url"):
-        if repo_url_dict.get("is_github"):
-            changelogs_dict = get_gh_changelogs(
-                repo_url_dict.get("url"), github_pat=github_pat
-            )
-            versions_reversed = [i for i in changelogs_dict.keys()]
-            return {
-                "all_changelogs": changelogs_dict,
-                "versions_reversed": versions_reversed,
-            }
-        else:
-            return {"url": repo_url}
-    else:
-        return {"error_message": "No changelog was found for this library."}
-
-
-# https://github.com/PyGithub/PyGithub
-@cache.memoize()
-def get_gh_changelogs(repo_url, github_pat=None):
-
-    stripped_url = repo_url.replace("https://", "").replace("github.com/", "")
-
-    GITHUB_PAT = os.environ.get("GITHUB_PAT", github_pat)
-
-    if GITHUB_PAT:
-        auth = Auth.Token(GITHUB_PAT)
-        # Public Web Github
-        with Github(auth=auth) as g:
-            repo = g.get_repo(stripped_url)
-
-            # Call get_releases() to fetch the releases
-            releases = repo.get_releases()  # all
-            changelogs = {
-                r.tag_name.lstrip("v"): {
-                    "release_date": r._published_at.value.strftime("%Y-%m-%d"),
-                    "release_url": r.html_url,
-                    "changelog_text": r.body,
-                }
-                for r in releases
-            }
-            return changelogs
-
-    return {}
-
 
 @cache.memoize()
 def get_lib_names_list(store_req=[], store_pip=[]):

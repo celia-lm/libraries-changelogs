@@ -204,7 +204,7 @@ def extract_name_version(line, file_type="req") -> dict:
         lib = {
             "raw_line_req": line.strip(),
             "name": name,
-            "req_version": version.rstrip(),
+            "req_version": version.rstrip() if version else None,
             "source": source,
             "req_pinned": pinned,
         }

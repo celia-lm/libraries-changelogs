@@ -38,13 +38,15 @@ app.layout = dmc.MantineProvider(
             value=["files"],
             children=[
                 # Instructions and resources
-                # dmc.AccordionItem(
-                #     [
-                #         dmc.AccordionControl("Instructions and resources"),
-                #         dmc.AccordionPanel(""),
-                #     ],
-                #     value="info",
-                # ),
+                dmc.AccordionItem(
+                    [
+                        dmc.AccordionControl("Additional resources"),
+                        dmc.AccordionPanel(
+                            pages.resources.resources_text
+                        ),
+                    ],
+                    value="info",
+                ),
                 # Upload file(s)
                 dmc.AccordionItem(
                     [
@@ -83,7 +85,8 @@ app.layout = dmc.MantineProvider(
             value=None,
         ),
         dcc.Loading(dmc.Container(id="content", fluid=True)),
-    ]
+        dmc.Space(h=100)
+    ],
 )
 
 

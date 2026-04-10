@@ -75,7 +75,7 @@ def layout(store_req, store_stripped_req, store_extra):
 )
 def update_textarea(n_clicks, store_req, store_extra):
     new_textarea_args = load_stripped_req(store_req, None, store_extra)
-    return load_stripped_req["value"]
+    return new_textarea_args["value"]
 
 
 @callback(

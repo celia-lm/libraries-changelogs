@@ -241,7 +241,7 @@ def is_valid_version(version):
         return False
 
 
-@cache.memoize()
+# @cache.memoize()
 def get_library_history(lib: dict | str) -> dict:
     """
     lib: dict
@@ -254,7 +254,9 @@ def get_library_history(lib: dict | str) -> dict:
     name = lib["name"].lower()
 
     # get information from the pypi page in json forman
-    releases_json = requests.get(f"https://pypi.org/pypi/{name}/json").json()
+    releases_request = requests.get(f"https://pypi.org/pypi/{name}/json")
+    releases_json = releases_request.json() if releases_request.status_code <= 200 else {}
+    print(f"Request status for library {name} is {releases_request.status_code}")
     if releases_json and releases_json.get("message") != "Not Found":
         versions_dict = {
             k: v[0]["upload_time"]

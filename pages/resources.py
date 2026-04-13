@@ -6,11 +6,6 @@ from dash import dcc, html
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
-commands = {
-    "clear_env":"pip uninstall -y -r <(pip freeze)",
-    "clear_pip_cache":"pip cache remove *"
-}
-
 def codeblock_with_copy(code):
     return dmc.Group([
         dmc.Code(
@@ -34,23 +29,37 @@ def codeblock_with_copy(code):
         gap="sm",
     )
 
-resources_text = dmc.Container([
-    dcc.Markdown("""
-        **Command to remove all of the installed libraries: **
-        """
-    ),
-    codeblock_with_copy(commands['clear_env']),
-    dcc.Markdown("""
-        **Command to remove cached dependencies: **
-        """
-    ),
-    codeblock_with_copy(commands['clear_pip_cache']),
-    dcc.Markdown("""
-        This command is useful when we want to install a library without a pinned version (e.g. `pip install dash`). 
-        If we had previously installed a specific version (e.g. `pip install dash==3.0.0`), 
-        pip will reuse that one since it has the wheel in its cache directory. 
-        Alternatively, we can do:
-        """
-    ),
-    codeblock_with_copy("pip install dash --no-cache-dir")
-])
+def components_from_md(markdown_file):
+    with open(markdown_file, 'r') as f:
+        markdown_lines = f.readlines()
+
+    # initialize variables for loop
+    components = []
+    current_block = ""
+    current_block_is_code = False
+
+    # loop
+    for l in markdown_lines:
+        if "```" in l:
+            print(current_block)
+            # if current_block_is_code is True, the ``` are CLOSING the codeblock
+            if current_block_is_code:
+                components.append(codeblock_with_copy(current_block))
+
+                # reset current_block for the next iteration
+                current_block = ""
+                current_block_is_code = False
+            # otherwise the ``` are OPENING the codeblock, 
+            # so we need to close+add the previous markdown component
+            else :
+                components.append(dcc.Markdown(current_block))
+                current_block = ""
+                current_block_is_code = True
+        else :
+            current_block += l
+
+    return components
+
+resources_text = dmc.Container(
+    components_from_md("pages/resources.md")
+)

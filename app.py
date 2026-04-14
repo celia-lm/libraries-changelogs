@@ -17,7 +17,6 @@ server = app.server
 
 cache = utils.cache
 
-
 with open("README.md", "r") as f:
     markdown_text = f.read()
     readme = dmc.Container(dcc.Markdown(markdown_text))

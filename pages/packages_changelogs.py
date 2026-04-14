@@ -9,6 +9,7 @@ import utils
 
 cache = utils.cache
 
+
 @cache.memoize()
 def version_markdown_format(all_changelogs, versions_to_add):
     return "\r\n***\r\n".join(

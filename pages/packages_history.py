@@ -174,6 +174,10 @@ def switch_to_chagelogs(n_clicks, selectedRows):
         libs = "&".join([lib["name"] for lib in selectedRows])
 
         dash.set_props(
-            "location", {"pathname": dash.get_relative_path("/changelogs"), "search": f"?libs={libs}"}
+            "location",
+            {
+                "pathname": dash.get_relative_path("/changelogs"),
+                "search": f"?libs={libs}",
+            },
         )
         dash.set_props("choose_action", {"value": "changelogs"})

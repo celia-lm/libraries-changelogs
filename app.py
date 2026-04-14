@@ -18,9 +18,9 @@ server = app.server
 cache = utils.cache
 
 
-with open('README.md', 'r') as f:
+with open("README.md", "r") as f:
     markdown_text = f.read()
-    readme = dcc.Markdown(markdown_text)
+    readme = dmc.Container(dcc.Markdown(markdown_text))
 
 app.layout = dmc.MantineProvider(
     [
@@ -46,9 +46,7 @@ app.layout = dmc.MantineProvider(
                 dmc.AccordionItem(
                     [
                         dmc.AccordionControl("What is this app?"),
-                        dmc.AccordionPanel(
-                            readme
-                        ),
+                        dmc.AccordionPanel(readme),
                     ],
                     value="readme",
                 ),
@@ -56,9 +54,7 @@ app.layout = dmc.MantineProvider(
                 dmc.AccordionItem(
                     [
                         dmc.AccordionControl("Additional resources"),
-                        dmc.AccordionPanel(
-                            pages.resources.resources_text
-                        ),
+                        dmc.AccordionPanel(pages.resources.resources_text),
                     ],
                     value="info",
                 ),
@@ -100,7 +96,7 @@ app.layout = dmc.MantineProvider(
             value=None,
         ),
         dcc.Loading(dmc.Container(id="content", fluid=True)),
-        dmc.Space(h=100)
+        dmc.Space(h=100),
     ],
 )
 

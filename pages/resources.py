@@ -10,7 +10,7 @@ from dash_iconify import DashIconify
 def codeblock_with_copy(code):
     return dmc.Group(
         [
-            dmc.Code(code, block=True),
+            dmc.Code(code, block=True, color="white", fz="sm"),
             dmc.CopyButton(
                 value="This text is copied",
                 children=DashIconify(icon="fa-regular:copy"),

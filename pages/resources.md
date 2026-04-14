@@ -19,7 +19,7 @@ pip install dash --no-cache-dir
 
 **pipdeptree: show dependencies of libraries and why a library was installed**
 
-While pip freeze shows a flat list, pipdeptree reveals which packages are top-level and what they depend on, including conflicting or circular dependencies. More information: pipdeptree usage](https://pipdeptree.readthedocs.io/en/latest/how-to/usage.html)
+While pip freeze shows a flat list, pipdeptree reveals which packages are top-level and what they depend on, including conflicting or circular dependencies. More information: [pipdeptree usage](https://pipdeptree.readthedocs.io/en/latest/how-to/usage.html)
 
 Get why a library has been installed (e.g. flask):
 ```

@@ -139,7 +139,7 @@ def extract_extra_index_url(file_source: str) -> str:
 @cache.memoize()
 def extract_version_from_string(file_string: str) -> str:
 
-    pattern = "\d+(\.\d+){2,3}"
+    pattern = r"\d+(\.\d+){2,3}"
 
     # Search for the pattern in the input string
     match = re.search(pattern, file_string)
@@ -258,7 +258,7 @@ def get_library_history(lib: dict | str) -> dict:
     releases_json = (
         releases_request.json() if releases_request.status_code <= 200 else {}
     )
-    print(f"Request status for library {name} is {releases_request.status_code}")
+    # print(f"Request status for library {name} is {releases_request.status_code}")
     if releases_json and releases_json.get("message") != "Not Found":
         versions_dict = {
             k: v[0]["upload_time"]

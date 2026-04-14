@@ -10,7 +10,10 @@ import re
 import pages
 
 app = Dash(
-    __name__, suppress_callback_exceptions=True, on_error=utils.raise_callback_error
+    __name__,
+    suppress_callback_exceptions=True,
+    on_error=utils.raise_callback_error,
+    title="Libraries Resources",
 )
 
 server = app.server
@@ -22,81 +25,91 @@ with open("README.md", "r") as f:
     readme = dmc.Container(dcc.Markdown(markdown_text))
 
 app.layout = dmc.MantineProvider(
-    [
-        # notification container
-        dmc.NotificationContainer(id="notification-container", position="top-right"),
-        # location to add query strings / parameters
-        dcc.Location(id="location", refresh="callback-nav"),
-        # stores
-        # stores for pip_freeze, req and build_logs are generated as part of their text areas
-        dcc.Store(id="store_raw", data=""),
-        dcc.Store(
-            id="store_extra", data={}, storage_type="local"
-        ),  # for additional information like extra-index-url
-        dcc.Store(
-            id="store_stripped_requirements", data=[], storage_type="local"
-        ),  # for stripped requirements
-        # layout
-        dmc.Accordion(
-            multiple=True,
-            value=["files"],
-            children=[
-                # README
-                dmc.AccordionItem(
-                    [
-                        dmc.AccordionControl("What is this app?"),
-                        dmc.AccordionPanel(readme),
-                    ],
-                    value="readme",
-                ),
-                # Instructions and resources
-                dmc.AccordionItem(
-                    [
-                        dmc.AccordionControl("Additional resources"),
-                        dmc.AccordionPanel(pages.resources.resources_text),
-                    ],
-                    value="info",
-                ),
-                # Upload file(s)
-                dmc.AccordionItem(
-                    [
-                        dmc.AccordionControl("Upload files"),
-                        dmc.AccordionPanel(
-                            [
-                                dmc.SimpleGrid(
-                                    [
-                                        utils.text_upload_set("req"),
-                                        utils.text_upload_set(
-                                            "pip_freeze",
-                                            placeholder=' run "pip freeze > pip_freeze.txt" to get this information in a txt file',
-                                        ),
-                                        # utils.text_upload_set("build_logs"),
-                                    ],
-                                    cols=2,  # 3
-                                    spacing="xs",
-                                )
-                            ]
-                        ),
-                    ],
-                    value="files",
-                ),
-            ],
-        ),
-        # Select a case
-        dmc.SegmentedControl(
-            id="choose_action",
-            orientation="horizontal",
-            fullWidth=True,
-            data=[
-                {"label": "Packages history", "value": "packages-history"},
-                {"label": "Changelogs", "value": "changelogs"},
-                {"label": "Strip requirements", "value": "strip-req"},
-            ],
-            value=None,
-        ),
-        dcc.Loading(dmc.Container(id="content", fluid=True)),
-        dmc.Space(h=100),
-    ],
+    dmc.Container(
+        [
+            # notification container
+            dmc.NotificationContainer(
+                id="notification-container", position="top-right"
+            ),
+            # location to add query strings / parameters
+            dcc.Location(id="location", refresh="callback-nav"),
+            # stores
+            # stores for pip_freeze, req and build_logs are generated as part of their text areas
+            dcc.Store(id="store_raw", data=""),
+            dcc.Store(
+                id="store_extra", data={}, storage_type="local"
+            ),  # for additional information like extra-index-url
+            dcc.Store(
+                id="store_stripped_requirements", data=[], storage_type="local"
+            ),  # for stripped requirements
+            # layout
+            dmc.Space(h=15),
+            dmc.Accordion(
+                multiple=True,
+                variant="contained",
+                value=[],
+                children=[
+                    # README
+                    dmc.AccordionItem(
+                        [
+                            dmc.AccordionControl("What is this app?"),
+                            dmc.AccordionPanel(readme),
+                        ],
+                        value="readme",
+                    ),
+                    # Instructions and resources
+                    dmc.AccordionItem(
+                        [
+                            dmc.AccordionControl("Additional resources"),
+                            dmc.AccordionPanel(pages.resources.resources_text),
+                        ],
+                        value="info",
+                    ),
+                    # Upload file(s)
+                    dmc.AccordionItem(
+                        [
+                            dmc.AccordionControl("Upload files"),
+                            dmc.AccordionPanel(
+                                [
+                                    dmc.SimpleGrid(
+                                        [
+                                            utils.text_upload_set("req"),
+                                            utils.text_upload_set(
+                                                "pip_freeze",
+                                                placeholder=' run "pip freeze > pip_freeze.txt" to get this information in a txt file',
+                                            ),
+                                            # utils.text_upload_set("build_logs"),
+                                        ],
+                                        cols=2,  # 3
+                                        spacing="xs",
+                                    )
+                                ]
+                            ),
+                        ],
+                        value="files",
+                    ),
+                ],
+            ),
+            dmc.Space(h=15),
+            # Select a case
+            dmc.SegmentedControl(
+                id="choose_action",
+                orientation="horizontal",
+                fullWidth=True,
+                data=[
+                    {"label": "Packages history", "value": "packages-history"},
+                    {"label": "Changelogs", "value": "changelogs"},
+                    {"label": "Strip requirements", "value": "strip-req"},
+                ],
+                value=None,
+                size="md",
+            ),
+            dmc.Space(h=15),
+            dcc.Loading(dmc.Container(id="content", fluid=True)),
+            dmc.Space(h=100),
+        ],
+        fluid=True,
+    )
 )
 
 

@@ -1,4 +1,5 @@
 import dash
+import os
 from dash import dcc, html
 from dash import callback, Input, Output, State, ctx, clientside_callback
 import dash_ag_grid as dag
@@ -101,7 +102,7 @@ def libraries_grid(lib_data, req=True, pip=True):
             },
         },
         enableEnterpriseModules=True,
-        licenseKey="placeholder",
+        licenseKey=os.environ.get("AG_GRID_LICENSE", "placeholder"),
     )
 
 
@@ -111,9 +112,10 @@ def layout(store_req, store_pip):
     pip = True
 
     if not any([store_req, store_pip]):
-        return dmc.Container(
-            "Upload requirements.txt and/or pip_freeze.txt to see each packages' history"
+        return dmc.Center(
+            "Upload requirements.txt and/or pip_freeze.txt to see each packages' history."
         )
+
     elif store_req and store_pip:
         req_df = pd.DataFrame.from_records(store_req)
         pip_df = pd.DataFrame.from_records(store_pip)

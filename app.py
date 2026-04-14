@@ -17,6 +17,11 @@ server = app.server
 
 cache = utils.cache
 
+
+with open('README.md', 'r') as f:
+    markdown_text = f.read()
+    readme = dcc.Markdown(markdown_text)
+
 app.layout = dmc.MantineProvider(
     [
         # notification container
@@ -37,6 +42,16 @@ app.layout = dmc.MantineProvider(
             multiple=True,
             value=["files"],
             children=[
+                # README
+                dmc.AccordionItem(
+                    [
+                        dmc.AccordionControl("What is this app?"),
+                        dmc.AccordionPanel(
+                            readme
+                        ),
+                    ],
+                    value="readme",
+                ),
                 # Instructions and resources
                 dmc.AccordionItem(
                     [

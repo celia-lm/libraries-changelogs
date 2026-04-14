@@ -41,7 +41,6 @@ def components_from_md(markdown_file):
     # loop
     for l in markdown_lines:
         if "```" in l:
-            print(current_block)
             # if current_block_is_code is True, the ``` are CLOSING the codeblock
             if current_block_is_code:
                 components.append(codeblock_with_copy(current_block))

@@ -10,7 +10,7 @@ import utils
 cache = utils.cache
 
 
-@cache.memoize()
+# @cache.memoize()
 def libraries_grid(lib_data, req=True, pip=True):
 
     columnDefs = [
@@ -129,7 +129,7 @@ def layout(store_req, store_pip):
         df_records = store_pip.copy()
         req = False
 
-    df_complete_records = [utils.get_library_history(lib) for lib in df_records]
+    df_complete_records = [utils.get_library_history(lib) for lib in df_records if lib["name"]]
     return dmc.Container(
         [
             dmc.Button(

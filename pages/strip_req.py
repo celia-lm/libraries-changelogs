@@ -25,11 +25,12 @@ def load_stripped_req(store_req, store_stripped_req, store_extra):
         else:
             stripped_req = [lib["name"] for lib in store_req]
 
-        textarea_value = extra_index_string + "\n".join(stripped_req)
+        sorted_req = sorted(stripped_req, key=str.lower)
+        textarea_value = extra_index_string + "\n".join(sorted_req)
         textarea_value.replace("\n\n", "\n")
 
         # save stripped requirements
-        dash.set_props("store_stripped_requirements", {"data": stripped_req})
+        dash.set_props("store_stripped_requirements", {"data": sorted_req})
 
     return {"value": textarea_value, "placeholder": placeholder}
 

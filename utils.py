@@ -1,11 +1,9 @@
-import pandas as pd
 import re
 import requests
 
 # https://stackoverflow.com/a/72188040
 from packaging.version import Version, parse
 
-import base64
 import dash_mantine_components as dmc
 from dash import dcc, html, ctx
 from dash_iconify import DashIconify
@@ -115,7 +113,7 @@ def check_library_valid_format(line: str) -> bool:
 
 
 @cache.memoize()
-def extract_extra_index_url(file_source: str) -> str:
+def extract_extra_index_url(file_source: str) -> list:
     """
     Read a line from a requirements.txt (pre-processed with `read_requirements_file`) and return it if it starts with `--extra-index-url`; otherwise, return an empty string.
 
@@ -276,6 +274,44 @@ def get_library_history(lib: dict | str) -> dict:
             "%Y-%m-%d"
         )
 
+        # handle stub version cases
+        # it will only work if the user who generated the GITHUB_PAT owns the repo or has organization access to it
+        if newest == "0.0.1":
+            GITHUB_PAT = os.environ.get("GITHUB_PAT")
+            if GITHUB_PAT :
+                auth = Auth.Token(GITHUB_PAT)
+                with Github(auth=auth) as g:
+                    user = g.get_user()
+                    repos = [r for r in user.get_repos(visibility="all") if name in r.full_name]
+                    # the matching is not perfect and it will probably result in some false positives and false negatives
+                    # but it's a simple approximation that might work in many cases
+                    matched_repo = None
+                    if len(repos) == 1:
+                        matched_repo = repos[0]
+                    elif len(repos) > 1:
+                        for r in repos:
+                            if name == r.name:
+                                matched_repo = r
+                                break
+
+                    if matched_repo :
+                        releases = matched_repo.get_releases()  # all
+                        # they are returned sorted chronologically
+                        # we'll sample the first 10 results because there can be instances 
+                        # where the most recent release is something like 3.8.2 but there's a previous 4.0.1 
+                        # in this case we'd want to keep v4.0.1
+                        # in len(releases) < 10, releases[:10] will just return releases, without error
+                        last_releases = [r.tag_name.lstrip("v") for r in releases[:10] if "rc" not in r.tag_name]
+                        last_releases.sort(key=Version)  
+                        newest = last_releases[-1]
+                        matched_release = [r for r in releases[:10] if newest in r.tag_name][0]
+                        newest_release_date = datetime.datetime.fromisoformat(
+                            str(matched_release.updated_at)
+                        ).strftime(
+                            "%Y-%m-%d"
+                        )    
+                                
+
         # installed version
         installed_version_info = versions.get(lib.get("installed_version"))
 
@@ -330,7 +366,6 @@ def get_library_history(lib: dict | str) -> dict:
 def get_repo_url(lib: dict):
     for name, url in lib["urls_dict"].items():
         if (name.lower() in ["source", "github"]) or ("github" in url):
-            is_github = True
             url_parts = url.removeprefix("https://github.com/").split("/")
             # make sure that the url matches the format for the GitHub API (gh/repo_owner/repo_name)
             # for example if the url is https://github.com/plotly/dash/releases, remove /releases

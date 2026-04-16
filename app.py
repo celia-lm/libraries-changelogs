@@ -37,10 +37,10 @@ app.layout = dmc.MantineProvider(
             # stores for pip_freeze, req and build_logs are generated as part of their text areas
             dcc.Store(id="store_raw", data=""),
             dcc.Store(
-                id="store_extra", data={}, storage_type="local"
+                id="store_extra", data={}, storage_type="session"
             ),  # for additional information like extra-index-url
             dcc.Store(
-                id="store_stripped_requirements", data=[], storage_type="local"
+                id="store_stripped_requirements", data=[], storage_type="session"
             ),  # for stripped requirements
             # layout
             dmc.Space(h=15),

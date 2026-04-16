@@ -66,7 +66,9 @@ def text_upload_set(file_type, placeholder=None):
     return html.Div(
         [
             dcc.Store(
-                id={"type": "store", "index": file_type}, data=[], storage_type="local"
+                id={"type": "store", "index": file_type},
+                data=[],
+                storage_type="session",
             ),  # for requirements.txt
             dmc.Textarea(
                 id={"type": "textarea", "index": file_type},
@@ -91,7 +93,6 @@ def text_upload_set(file_type, placeholder=None):
                 minRows=5,
                 maxRows=10,
                 placeholder=placeholder,
-                debounce=True,
                 persistence=True,
                 persistence_type="local",
             ),
@@ -149,7 +150,7 @@ def extract_version_from_string(file_string: str) -> str:
         extracted_string = match.group()
         return extracted_string
     else:
-        return None
+        return ""
 
 
 # file (requirements, pip freeze) specific

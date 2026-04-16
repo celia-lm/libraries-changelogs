@@ -97,7 +97,7 @@ def version_management_layout_gh(lib_name: str, changelogs_dict: dict):
                 cols=1,
                 spacing="xs",
             ),
-            dmc.Space(h=10)
+            dmc.Space(h=10),
         ]
     )
 

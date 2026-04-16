@@ -129,7 +129,9 @@ def layout(store_req, store_pip):
         df_records = store_pip.copy()
         req = False
 
-    df_complete_records = [utils.get_library_history(lib) for lib in df_records if lib["name"]]
+    df_complete_records = [
+        utils.get_library_history(lib) for lib in df_records if lib["name"]
+    ]
     return dmc.Container(
         [
             dmc.Button(

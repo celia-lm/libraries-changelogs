@@ -10,7 +10,7 @@ import utils
 cache = utils.cache
 
 
-# @cache.memoize()
+@cache.memoize()
 def libraries_grid(lib_data, req=True, pip=True):
 
     columnDefs = [

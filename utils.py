@@ -240,7 +240,7 @@ def is_valid_version(version):
         return False
 
 
-# @cache.memoize()
+@cache.memoize()
 def get_library_history(lib: dict | str) -> dict:
     """
     lib: dict

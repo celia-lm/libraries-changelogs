@@ -105,7 +105,7 @@ app.layout = dmc.MantineProvider(
                 size="md",
             ),
             dmc.Space(h=15),
-            dcc.Loading(dmc.Container(id="content", fluid=True)),
+            dcc.Loading(dmc.Container(id="content", fluid=True), delay_show=500),
             dmc.Space(h=100),
         ],
         fluid=True,

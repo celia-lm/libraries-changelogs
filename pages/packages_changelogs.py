@@ -46,124 +46,124 @@ def version_management_layout_gh(lib_name: str, changelogs_dict: dict):
                         variant="outline",
                         id={"type": "changelog-version-load-more", "index": lib_name},
                     ),
-                    dmc.Popover(
-                        trapFocus=True,
-                        position="top",
-                        withArrow=True,
-                        children=[
-                            dmc.PopoverTarget(
-                                dmc.Button(
-                                    "Or select min and max versions", variant="outline"
-                                ),
-                            ),
-                            dmc.PopoverDropdown(
-                                [
-                                    dmc.Select(
-                                        label="Min version",
-                                        clearable=True,
-                                        searchable=True,
-                                        data=versions_reversed,
-                                        placeholder=versions_reversed[-1],
-                                        id={
-                                            "type": "changelog-version-min",
-                                            "index": lib_name,
-                                        },
-                                    ),
-                                    dmc.Select(
-                                        label="Max version",
-                                        clearable=True,
-                                        searchable=True,
-                                        data=versions_reversed,
-                                        placeholder=versions_reversed[0],
-                                        id={
-                                            "type": "changelog-version-max",
-                                            "index": lib_name,
-                                        },
-                                    ),
-                                    dmc.ActionIcon(
-                                        DashIconify(icon="lucide:refresh-cw"),
-                                        variant="transparent",
-                                        id={
-                                            "type": "changelog-version-update",
-                                            "index": lib_name,
-                                        },
-                                    ),
-                                ]
-                            ),
-                        ],
-                    ),
+                    # dmc.Popover(
+                    #     trapFocus=True,
+                    #     position="top",
+                    #     withArrow=True,
+                    #     children=[
+                    #         dmc.PopoverTarget(
+                    #             dmc.Button(
+                    #                 "Or select min and max versions", variant="outline"
+                    #             ),
+                    #         ),
+                    #         dmc.PopoverDropdown(
+                    #             [
+                    #                 dmc.Select(
+                    #                     label="Min version",
+                    #                     clearable=True,
+                    #                     searchable=True,
+                    #                     data=versions_reversed,
+                    #                     placeholder=versions_reversed[-1],
+                    #                     id={
+                    #                         "type": "changelog-version-min",
+                    #                         "index": lib_name,
+                    #                     },
+                    #                 ),
+                    #                 dmc.Select(
+                    #                     label="Max version",
+                    #                     clearable=True,
+                    #                     searchable=True,
+                    #                     data=versions_reversed,
+                    #                     placeholder=versions_reversed[0],
+                    #                     id={
+                    #                         "type": "changelog-version-max",
+                    #                         "index": lib_name,
+                    #                     },
+                    #                 ),
+                    #                 dmc.ActionIcon(
+                    #                     DashIconify(icon="lucide:refresh-cw"),
+                    #                     variant="transparent",
+                    #                     id={
+                    #                         "type": "changelog-version-update",
+                    #                         "index": lib_name,
+                    #                     },
+                    #                 ),
+                    #             ]
+                    #         ),
+                    #     ],
+                    # ),
                 ],
-                cols=2,
+                cols=1,
                 spacing="xs",
             ),
         ]
     )
 
 
-@callback(
-    Output({"type": "changelog-container", "index": MATCH}, "children"),
-    Input({"type": "changelog-version-update", "index": MATCH}, "n_clicks"),
-    Input({"type": "changelog-version-load-more", "index": MATCH}, "n_clicks"),
-    State({"type": "changelog-version-min", "index": MATCH}, "value"),
-    State({"type": "changelog-version-max", "index": MATCH}, "value"),
-    State({"type": "changelog-store", "index": MATCH}, "data"),
-    State({"type": "changelog-state", "index": MATCH}, "data"),
-)
-def update_changelog_versions(
-    n_clicks_update,
-    n_clicks_load_more,
-    min_version,
-    max_version,
-    versions_store,
-    versions_state,
-):
-    if not ctx.triggered:
-        return dash.no_update
-    elif ctx.triggered_id["type"] == "changelog-version-load-more":
-        versions_reversed = versions_store.get("versions_reversed")
-        all_changelogs = versions_store.get("all_changelogs")
-        current_last_version = versions_state.get("last")
-        current_position = (
-            versions_reversed.index(current_last_version) if current_last_version else 4
-        )
-        # https://stackoverflow.com/a/24204498 itemgetter
-        # we need to do +1 to current position to avoid generating a duplicate
-        # the first value we want to take is the one that follows the current position
-        versions_to_add = versions_reversed[current_position + 1 : current_position + 6]
-        current_text = Patch()
+# @callback(
+#     Output({"type": "changelog-container", "index": MATCH}, "children"),
+#     Input({"type": "changelog-version-update", "index": MATCH}, "n_clicks"),
+#     Input({"type": "changelog-version-load-more", "index": MATCH}, "n_clicks"),
+#     State({"type": "changelog-version-min", "index": MATCH}, "value"),
+#     State({"type": "changelog-version-max", "index": MATCH}, "value"),
+#     State({"type": "changelog-store", "index": MATCH}, "data"),
+#     State({"type": "changelog-state", "index": MATCH}, "data"),
+# )
+# def update_changelog_versions(
+#     n_clicks_update,
+#     n_clicks_load_more,
+#     min_version,
+#     max_version,
+#     versions_store,
+#     versions_state,
+# ):
+#     if not ctx.triggered:
+#         return dash.no_update
+#     elif ctx.triggered_id["type"] == "changelog-version-load-more":
+#         versions_reversed = versions_store.get("versions_reversed")
+#         all_changelogs = versions_store.get("all_changelogs")
+#         current_last_version = versions_state.get("last")
+#         current_position = (
+#             versions_reversed.index(current_last_version) if current_last_version else 4
+#         )
+#         # https://stackoverflow.com/a/24204498 itemgetter
+#         # we need to do +1 to current position to avoid generating a duplicate
+#         # the first value we want to take is the one that follows the current position
+#         versions_to_add = versions_reversed[current_position + 1 : current_position + 6]
+#         current_text = Patch()
 
-        text_to_add = version_markdown_format(all_changelogs, versions_to_add)
+#         text_to_add = version_markdown_format(all_changelogs, versions_to_add)
 
-        current_text += text_to_add
-        # we use a different store to changelog-store so that we can overwrite the value of this one
-        # without having to send back the changelog-store as an output too
-        dash.set_props(
-            {"type": "changelog-state", "index": ctx.triggered_id["index"]},
-            {"data": {"last": versions_to_add[-1]}},
-        )
-        return current_text
-    else:
-        versions_reversed = versions_store.get("versions_reversed")
-        min_version_position = (
-            versions_reversed.index(min_version)
-            if min_version
-            else len(versions_reversed)
-        )
-        max_version_position = (
-            versions_reversed.index(max_version) if max_version else 0
-        )
-        # since the list is in reverse order (from most recent to oldest) we will select max:min
-        versions_to_add = versions_reversed[
-            max_version_position : min_version_position + 1
-        ]
-        new_text = version_markdown_format(all_changelogs, versions_to_add)
+#         current_text += text_to_add
+#         # we use a different store to changelog-store so that we can overwrite the value of this one
+#         # without having to send back the changelog-store as an output too
+#         dash.set_props(
+#             {"type": "changelog-state", "index": ctx.triggered_id["index"]},
+#             {"data": {"last": versions_to_add[-1]}},
+#         )
+#         return current_text
+#     else:
+#         versions_reversed = versions_store.get("versions_reversed")
+#         min_version_position = (
+#             versions_reversed.index(min_version)
+#             if min_version
+#             else len(versions_reversed)
+#         )
+#         max_version_position = (
+#             versions_reversed.index(max_version) if max_version else 0
+#         )
+#         # since the list is in reverse order (from most recent to oldest) we will select max:min
+#         versions_to_add = versions_reversed[
+#             max_version_position : min_version_position + 1
+#         ]
+#         new_text = version_markdown_format(all_changelogs, versions_to_add)
 
-        # reset count for the changelog state
-        dash.set_props(
-            {"type": "changelog-state", "index": ctx.triggered_id["index"]},
-            {"data": {"last": None}},
-        )
-        return new_text
+#         # reset count for the changelog state
+#         dash.set_props(
+#             {"type": "changelog-state", "index": ctx.triggered_id["index"]},
+#             {"data": {"last": None}},
+#         )
+#         return new_text
 
 
 @cache.memoize()
@@ -207,8 +207,6 @@ def changelog_accordion(lib_name):
 
 
 def layout(libs, store_req={}, store_pip={}):
-
-    # changelogs = [changelog_accordion(l) for l in libs] if libs else []
 
     return dmc.Container(
         [

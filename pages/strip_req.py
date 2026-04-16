@@ -15,7 +15,7 @@ def load_stripped_req(store_req, store_stripped_req, store_extra):
         placeholder = "Provide some requirements.txt to remove their version numbers"
     else:
         if store_extra:
-            extra_index_string = "\n".join(store_extra.get("extra_index_url", ""))
+            extra_index_string = "\n".join(store_extra.get("extra_index_url", "")) + "\n" 
         else:
             extra_index_string = ""
         if store_stripped_req:
@@ -23,7 +23,7 @@ def load_stripped_req(store_req, store_stripped_req, store_extra):
         else:
             stripped_req = [lib["name"] for lib in store_req]
 
-        textarea_value = extra_index_string + "\n" + "\n".join(stripped_req)
+        textarea_value = extra_index_string + "\n".join(stripped_req)
         textarea_value.replace("\n\n", "\n")
 
         # save stripped requirements

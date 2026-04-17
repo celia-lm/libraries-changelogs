@@ -52,7 +52,7 @@ def process_textarea(raw_info_req, raw_info_pip):
         req_name_version = [
             utils.extract_name_version(line, file_type="req")
             for line in req_list
-            if len(line) > 0
+            if line.strip()
         ]
         store_extra = Patch()
         store_extra["extra_index_url"] = utils.extract_extra_index_url(raw_info_req)
@@ -62,6 +62,6 @@ def process_textarea(raw_info_req, raw_info_pip):
         pip_name_version = [
             utils.extract_name_version(line, file_type="pip_freeze")
             for line in pip_list
-            if len(line) > 0
+            if line.strip()
         ]
         return dash.no_update, dash.no_update, pip_name_version

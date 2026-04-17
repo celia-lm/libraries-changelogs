@@ -96,7 +96,7 @@ def text_upload_set(file_type, placeholder=None):
                 maxRows=10,
                 placeholder=placeholder,
                 persistence=True,
-                persistence_type="local",
+                persistence_type="session",
             ),
         ]
     )

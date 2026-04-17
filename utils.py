@@ -24,6 +24,10 @@ from github import Github, Auth
 # ic.configureOutput(prefix=timestamp)
 
 cache = diskcache.Cache("./cache")
+CACHE_EXPIRY = 24*60*60 # one day
+
+# clear the cache with each new deployment
+cache.clear()
 
 # file_ids
 file_ids = {
@@ -97,7 +101,7 @@ def text_upload_set(file_type, placeholder=None):
         ]
     )
 
-
+# doesn't need to expire
 @cache.memoize()
 def check_library_valid_format(line: str) -> bool:
     comment_pattern = "^#"
@@ -111,7 +115,7 @@ def check_library_valid_format(line: str) -> bool:
     else:
         return True
 
-
+# doesn't need to expire
 @cache.memoize()
 def extract_extra_index_url(file_source: str) -> list:
     """
@@ -134,7 +138,7 @@ def extract_extra_index_url(file_source: str) -> list:
 
     return extra_index_list
 
-
+# doesn't need to expire
 @cache.memoize()
 def extract_version_from_string(file_string: str) -> str:
 
@@ -152,6 +156,7 @@ def extract_version_from_string(file_string: str) -> str:
 
 
 # file (requirements, pip freeze) specific
+# doesn't need to expire
 @cache.memoize()
 def strip_requirements(line: str) -> str:
     return re.split("==|>=|<=|>|<|~=", line)[0]
@@ -176,7 +181,7 @@ def read_requirements_text(req_text: str) -> list[str]:
 
     return requirements_list
 
-
+# doesn't need to expire
 @cache.memoize()
 def extract_name_version(line, file_type="req") -> dict:
 
@@ -230,7 +235,7 @@ def extract_name_version(line, file_type="req") -> dict:
 
     return lib
 
-
+# doesn't need to expire
 @cache.memoize()
 def is_valid_version(version):
     try:
@@ -240,7 +245,8 @@ def is_valid_version(version):
         return False
 
 
-@cache.memoize()
+# needs to expire because it retrieves library updates
+@cache.memoize(expire=CACHE_EXPIRY)
 def get_library_history(lib: dict | str) -> dict:
     """
     lib: dict
@@ -368,7 +374,8 @@ def get_library_history(lib: dict | str) -> dict:
 
     return lib
 
-
+# doesn't need to expire because it will only change if the values for lib changes
+# and if the value for lib changes, there will be no memoized result for it
 @cache.memoize()
 def get_repo_url(lib: dict):
     for name, url in lib["urls_dict"].items():
@@ -388,7 +395,7 @@ def get_repo_url(lib: dict):
 # https://flask-caching.readthedocs.io/en/latest/index.html#deleting-memoize-cache
 # TODO: add checks for recent updates to delete memoized result
 # and re-execute the get_gh_changelogs function
-@cache.memoize()
+@cache.memoize(expire=CACHE_EXPIRY)
 def get_changelogs(repo_url_dict, github_pat=None):
     if repo_url_dict.get("url"):
         if repo_url_dict.get("is_github"):
@@ -407,7 +414,7 @@ def get_changelogs(repo_url_dict, github_pat=None):
 
 
 # https://github.com/PyGithub/PyGithub
-@cache.memoize()
+@cache.memoize(expire=CACHE_EXPIRY)
 def get_gh_changelogs(repo_url, github_pat=None):
 
     stripped_url = repo_url.replace("https://", "").replace("github.com/", "")

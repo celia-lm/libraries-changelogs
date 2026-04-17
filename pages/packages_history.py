@@ -9,7 +9,7 @@ import utils
 
 cache = utils.cache
 
-
+# doesn't need to expire/can be reused because the data is set based on the value that is passed to lib_data
 @cache.memoize()
 def libraries_grid(lib_data, req=True, pip=True):
 

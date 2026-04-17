@@ -9,7 +9,7 @@ import utils
 
 cache = utils.cache
 
-
+# doesn't need to expire
 @cache.memoize()
 def version_markdown_format(all_changelogs, versions_to_add):
     return "\r\n***\r\n".join(
@@ -168,8 +168,8 @@ def update_changelog_versions(
         # return new_text
         return dash.no_update
 
-
-@cache.memoize()
+# needs to expire because it calls get_changelogs
+@cache.memoize(expire=utils.CACHE_EXPIRY)
 def changelog_accordion(lib_name):
     lib = utils.get_library_history(lib_name)
     repo_url = utils.get_repo_url(lib)

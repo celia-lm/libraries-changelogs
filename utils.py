@@ -98,7 +98,7 @@ def text_upload_set(file_type, placeholder=None):
     )
 
 
-# @cache.memoize()
+@cache.memoize()
 def check_library_valid_format(line: str) -> bool:
     comment_pattern = "^#"
     extra_index_pattern = "^--"
@@ -112,7 +112,7 @@ def check_library_valid_format(line: str) -> bool:
         return True
 
 
-# @cache.memoize()
+@cache.memoize()
 def extract_extra_index_url(file_source: str) -> list:
     """
     Read a line from a requirements.txt (pre-processed with `read_requirements_file`) and return it if it starts with `--extra-index-url`; otherwise, return an empty string.
@@ -135,7 +135,7 @@ def extract_extra_index_url(file_source: str) -> list:
     return extra_index_list
 
 
-# @cache.memoize()
+@cache.memoize()
 def extract_version_from_string(file_string: str) -> str:
 
     pattern = r"\d+(\.\d+){2,3}"
@@ -152,7 +152,7 @@ def extract_version_from_string(file_string: str) -> str:
 
 
 # file (requirements, pip freeze) specific
-# @cache.memoize()
+@cache.memoize()
 def strip_requirements(line: str) -> str:
     return re.split("==|>=|<=|>|<|~=", line)[0]
 
@@ -177,7 +177,7 @@ def read_requirements_text(req_text: str) -> list[str]:
     return requirements_list
 
 
-# @cache.memoize()
+@cache.memoize()
 def extract_name_version(line, file_type="req") -> dict:
 
     delimiter_pattern = "==|>=|<=|>|<|~="
@@ -231,7 +231,7 @@ def extract_name_version(line, file_type="req") -> dict:
     return lib
 
 
-# @cache.memoize()
+@cache.memoize()
 def is_valid_version(version):
     try:
         parse(version)
@@ -240,7 +240,7 @@ def is_valid_version(version):
         return False
 
 
-# @cache.memoize()
+@cache.memoize()
 def get_library_history(lib: dict | str) -> dict:
     """
     lib: dict
@@ -369,7 +369,7 @@ def get_library_history(lib: dict | str) -> dict:
     return lib
 
 
-# @cache.memoize()
+@cache.memoize()
 def get_repo_url(lib: dict):
     for name, url in lib["urls_dict"].items():
         if (name.lower() in ["source", "github"]) or ("github" in url):
@@ -388,7 +388,7 @@ def get_repo_url(lib: dict):
 # https://flask-caching.readthedocs.io/en/latest/index.html#deleting-memoize-cache
 # TODO: add checks for recent updates to delete memoized result
 # and re-execute the get_gh_changelogs function
-# @cache.memoize()
+@cache.memoize()
 def get_changelogs(repo_url_dict, github_pat=None):
     if repo_url_dict.get("url"):
         if repo_url_dict.get("is_github"):
@@ -407,7 +407,7 @@ def get_changelogs(repo_url_dict, github_pat=None):
 
 
 # https://github.com/PyGithub/PyGithub
-# @cache.memoize()
+@cache.memoize()
 def get_gh_changelogs(repo_url, github_pat=None):
 
     stripped_url = repo_url.replace("https://", "").replace("github.com/", "")
@@ -435,6 +435,6 @@ def get_gh_changelogs(repo_url, github_pat=None):
     return {}
 
 
-# @cache.memoize()
+@cache.memoize()
 def get_lib_names_list(store_req=[], store_pip=[]):
     return list(set([lib["name"] for lib in store_req + store_pip]))

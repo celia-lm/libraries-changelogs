@@ -12,7 +12,7 @@ def codeblock_with_copy(code):
         [
             dmc.Code(code, block=True, color="white", fz="sm"),
             dmc.CopyButton(
-                value="This text is copied",
+                value=str(code),
                 children=DashIconify(icon="fa-regular:copy"),
                 copiedChildren=DashIconify(icon="fa-regular:check-circle"),
                 color="gray",

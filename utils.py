@@ -29,6 +29,16 @@ CACHE_EXPIRY = 24*60*60 # one day
 # clear the cache with each new deployment
 cache.clear()
 
+DE_LIBRARIES = [
+    "data-sources",
+    "dash-design-kit",
+    "dash-embedded",
+    "dash-enterprise-libraries",
+    "dash-oauth-connections",
+    "dash-snapshots",
+    "de-client"
+]
+
 # file_ids
 file_ids = {
     "req": "requirements.txt",
@@ -150,7 +160,9 @@ def extract_version_from_string(file_string: str) -> str:
     # Extract the matched string
     if match:
         extracted_string = match.group()
-        return extracted_string
+        # add this cleaning step to account for cases like "pandas == 2.1.3 #somecomment"
+        clean_string = extracted_string.split("#")[0].replace(" ", "")
+        return clean_string
     else:
         return ""
 
@@ -260,9 +272,14 @@ def get_library_history(lib: dict | str) -> dict:
 
     # get information from the pypi page in json forman
     releases_request = requests.get(f"https://pypi.org/pypi/{name}/json")
-    releases_json = (
-        releases_request.json() if releases_request.status_code <= 200 else {}
-    )
+
+    try :
+        releases_json = (
+            releases_request.json() if releases_request.status_code <= 200 else {}
+        )
+    except:
+        releases_json = {}
+
     # print(f"Request status for library {name} is {releases_request.status_code}")
     if releases_json and releases_json.get("message") != "Not Found":
         versions_dict = {
